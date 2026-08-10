@@ -10,7 +10,7 @@ UPDATE public.scrims SET map = 'SMU GH SFOldTown' WHERE map = 'SF Old Town';
 UPDATE public.scrims SET map = 'SMU GH SFFloodgate' WHERE map = 'SF Floodgate';
 UPDATE public.scrims SET map = 'SMU GH SFRefinery' WHERE map = 'SF Refinery';
 
-CREATE OR REPLACE FUNCTION public.assign_tiered_map_if_needed(p_scrim_id UUID)
+CREATE OR REPLACE FUNCTION public.assign_tiered_map_if_needed(p_scrim_id UUID, number_of_players integer)
 RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY DEFINER

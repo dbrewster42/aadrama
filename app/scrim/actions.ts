@@ -71,10 +71,11 @@ export async function createScrim(input?: CreateScrimInput): Promise<Scrim> {
 }
 
 /** Assign a weighted random map for tiered scrims once teams are set (idempotent). */
-async function assignTieredMapIfNeeded(scrimId: string): Promise<void> {
+async function assignTieredMapIfNeeded(scrimId: string, numberOfPlayers: number): Promise<void> {
   const supabase = await createClient()
   const { data, error } = await supabase.rpc('assign_tiered_map_if_needed', {
     p_scrim_id: scrimId,
+    number_of_players: numberOfPlayers
   })
 
   if (error) {
@@ -290,7 +291,7 @@ async function checkAndStartGame(scrimId: string): Promise<void> {
     }
 
     console.log(`[Scrim ${scrimId}] Skill-based teams assigned successfully! Game started.`)
-    await assignTieredMapIfNeeded(scrimId)
+    await assignTieredMapIfNeeded(scrimId, totalCount)
   } else {
     // Random mode - assign teams randomly
     console.log(`[Scrim ${scrimId}] Random mode - calling assign_random_teams...`)
@@ -302,7 +303,7 @@ async function checkAndStartGame(scrimId: string): Promise<void> {
     }
 
     console.log(`[Scrim ${scrimId}] Teams assigned successfully! Game started.`)
-    await assignTieredMapIfNeeded(scrimId)
+    await assignTieredMapIfNeeded(scrimId, totalCount)
   }
 }
 
@@ -1349,7 +1350,8 @@ export async function draftPlayer(scrimId: string, pickedUserId: string): Promis
   const updated = await getScrim(scrimId)
   if (updated?.status === 'in_progress') {
     try {
-      await assignTieredMapIfNeeded(scrimId)
+      const players = await getScrimPlayers(scrimId)
+      await assignTieredMapIfNeeded(scrimId, players.length)
     } catch (err) {
       console.error(`[Scrim ${scrimId}] Tiered map assign after draft failed:`, err)
     }
