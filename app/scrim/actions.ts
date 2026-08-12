@@ -73,7 +73,7 @@ export async function createScrim(input?: CreateScrimInput): Promise<Scrim> {
 /** Assign a weighted random map for tiered scrims once teams are set (idempotent). */
 async function assignTieredMapIfNeeded(scrimId: string, numberOfPlayers: number): Promise<void> {
   const supabase = await createClient()
-  if (numberOfPlayers >= 12) {
+  if (numberOfPlayers >= 10) {
     const { data, error } = await supabase.rpc('assign_tiered_map_six_plus', {
       p_scrim_id: scrimId
     })
