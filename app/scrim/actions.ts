@@ -73,23 +73,21 @@ export async function createScrim(input?: CreateScrimInput): Promise<Scrim> {
 /** Assign a weighted random map for tiered scrims once teams are set (idempotent). */
 async function assignTieredMapIfNeeded(scrimId: string, numberOfPlayers: number): Promise<void> {
   const supabase = await createClient()
-  if (numberOfPlayers >= 10) {
-    const { data, error } = await supabase.rpc('assign_tiered_map_six_plus', {
-      p_scrim_id: scrimId
-    })
-    if (error) {
-      console.error(`[Scrim ${scrimId}] Failed to assign tiered map 6v6:`, error)
-      throw new Error(`Failed to assign tiered map: ${error.message}`)
-    }
-
-    if (data) {
-      console.log(`[Scrim ${scrimId}] Tiered map 6v6 assigned/confirmed: ${data}`)
-    }
+  if (numberOfPlayers <= 8) {
+    assignTieredMap(scrimId, 'assign_tiered_map_if_needed')
+  } else if (numberOfPlayers = 10) {
+    assignTieredMap(scrimId, 'assign_tiered_map_five')
+  } else if (numberOfPlayers >= 12) {
+    assignTieredMap(scrimId, 'assign_tiered_map_six_plus')
   } else {
-    const { data, error } = await supabase.rpc('assign_tiered_map_if_needed', {
-      p_scrim_id: scrimId
-    })
+    console.error('invalid number of players')
+    throw new Error(`invalid number of players`)
+  }
+}
 
+async function assignTieredMap(scrimId: string, functionName: string) {
+    const supabase = await createClient()
+    const { data, error } = await supabase.rpc(functionName, { p_scrim_id: scrimId })
     if (error) {
       console.error(`[Scrim ${scrimId}] Failed to assign tiered map:`, error)
       throw new Error(`Failed to assign tiered map: ${error.message}`)
@@ -98,7 +96,6 @@ async function assignTieredMapIfNeeded(scrimId: string, numberOfPlayers: number)
     if (data) {
       console.log(`[Scrim ${scrimId}] Tiered map assigned/confirmed: ${data}`)
     }
-  }
 }
 
 // Get all active scrims (waiting or in progress)

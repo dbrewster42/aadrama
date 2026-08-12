@@ -10,7 +10,7 @@ UPDATE public.scrims SET map = 'SMU GH SFOldTown' WHERE map = 'SF Old Town';
 UPDATE public.scrims SET map = 'SMU GH SFFloodgate' WHERE map = 'SF Floodgate';
 UPDATE public.scrims SET map = 'SMU GH SFRefinery' WHERE map = 'SF Refinery';
 
-CREATE OR REPLACE FUNCTION public.assign_tiered_map_six_plus(p_scrim_id UUID)
+CREATE OR REPLACE FUNCTION public.assign_tiered_map_five(p_scrim_id UUID)
 RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -44,45 +44,40 @@ BEGIN
   -- Map names must match get_distinct_maps / player_stats.map
   WITH pool AS (
     SELECT * FROM (VALUES
-      ('Insurgent Camp', 0.1000000000000000),
-      ('Urban Assault', 0.1000000000000000),
-      ('MOUT McKenna', 0.1000000000000000),
-      ('Dusk', 0.1000000000000000),
-      ('Canyon', 0.1000000000000000),
-      ('Woodland Outpost', 0.1000000000000000),
-      ('SF Sandstorm', 0.1000000000000000),
-      ('Weapons Cache SE', 0.0830718954248366),
-      ('Mountain Ambush', 0.0830718954248366),
-      ('SF Hospital', 0.0672043010752688),
-      ('SMU GH RiverVillage', 0.0672043010752688),
-      ('[AA3] Impact', 0.0503369175627240),
-      ('Border', 0.0503369175627240),
-      ('River Basin', 0.0365359477124183),
-      ('Bridge SE', 0.0297706093189964),
-      ('Mountain Pass SE', 0.0297706093189964),
-      ('Headquarters Raid', 0.0222222222222222),
-      ('District', 0.0222222222222222),
+      ('Insurgent Camp', 0.1100000000000000),
+      ('Urban Assault', 0.1100000000000000),
+      ('MOUT McKenna', 0.1100000000000000),
+      ('Canyon', 0.0800000000000000),
+      ('Woodland Outpost', 0.0800000000000000),
+      ('SF Sandstorm', 0.0700000000000000),
+      ('District', 0.0500000000000000),
+      ('Headquarters Raid', 0.0500000000000000),
+      ('Dusk', 0.0400000000000000),
+      ('Mountain Ambush', 0.0400000000000000),
+      ('SMU GH RiverVillage', 0.0400000000000000),
+      ('[AA3] Impact', 0.0400000000000000),
+      ('SF Hospital', 0.0300000000000000),
+      ('Border', 0.0300000000000000),
+      ('Bridge SE', 0.0222222222222222),
+      ('River Basin', 0.0222222222222222),
+      ('SF Dockside', 0.0222222222222222),
+      ('Rummage', 0.0222222222222222),
       ('Swamp Raid', 0.0222222222222222),
       ('SF PCR', 0.0222222222222222),
-      ('SF Dockside', 0.0111111111111111),
-      ('SF Oasis', 0.0111111111111111),
+      ('Weapons Cache SE', 0.0111111111111111),
+      ('Mountain Pass SE', 0.0111111111111111),
       ('SF Blizzard', 0.0111111111111111),
-      ('JRTC Farm Raid', 0.0050000000000000),
-      ('SF Courtyard', 0.0050000000000000),
-      ('SF Village', 0.0050000000000000),
-      ('Rummage', 0.0050000000000000),
-      ('Pipeline', 0.0050000000000000),
+      ('JRTC Farm Raid', 0.0111111111111111),
+      ('Pipeline', 0.0111111111111111),
+      ('Collapsed Tunnel', 0.0080000000000000),
+      ('SF Oasis', 0.0050000000000000),
       ('SMU GH SFOldTown', 0.0050000000000000),
       ('Weapons Cache', 0.0050000000000000),
-      ('SF Taiga', 0.0035842293906810),
-      ('Radio Tower', 0.00025842293906810),
-      ('SF Recon', 0.000026666666666667),
-      ('SF Arctic', 0.00017777777777778),
-      ('SF Water Treatment', 0.00031111111111111),
-      ('SMU GH SFFloodgate', 0.00022222222222222),
-      ('SMU GH SFRefinery', 0.000011111111111111),
-      ('Steamroller', 0.00004444444444444),
       ('SF Extraction', 0.0004444444444444)
+      ('SF Taiga', 0.00022222222222222),
+      ('SF Water Treatment', 0.00022222222222222),
+      ('SMU GH SFFloodgate', 0.00022222222222222),
+      ('SF Arctic', 0.00017777777777778),
     ) AS t(map_name, weight)
   ),
   totals AS (
